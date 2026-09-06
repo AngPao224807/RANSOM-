@@ -14,12 +14,19 @@ jobs:
       - name: ติดตั้งโปรแกรมที่จำเป็น
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip build-essential git zlib1g-dev libncurses5-dev libssl-dev libffi-dev wget automake libtool openjdk-17-jdk unzip ccache
+          sudo apt-get install -y python3-pip build-essential git zlib1g-dev libssl-dev libffi-dev wget automake libtool openjdk-17-jdk unzip ccache
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.36
 
+      - name: ยอมรับ Android SDK License ล่วงหน้า
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+
       - name: สร้าง APK
-        run: buildozer -v android debug
+        run: yes | buildozer -v android debug
 
       - name: อัปโหลด APK
         uses: actions/upload-artifact@v4
