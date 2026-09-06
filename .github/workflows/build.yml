@@ -6,19 +6,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
+      - name: ติดตั้งโปรแกรมที่จำเป็น
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip build-essential git zlib1g-dev libncurses5-dev libssl-dev libffi-dev wget automake libtool openjdk-17-jdk unzip ccache
+          pip3 install --upgrade pip
+          pip3 install buildozer cython==0.29.36
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: สร้าง APK
+        run: buildozer -v android debug
+
+      - name: อัปโหลด APK
+        uses: actions/upload-artifact@v4
         with:
           name: ransom-apk
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
